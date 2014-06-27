@@ -9,13 +9,16 @@
 	li{float:left;width:200px;}
 	.clear{clear:both;}
 	a.article{display:block;line-height:20px;font-size:14px;font-weight:bold;color:#333333;}
+	@media (max-width: 400px) {
+		.nav{display:none;}
+	}
 	</style>
 </head>
 <body>
 <img src="people-hot-list-logo.png" id="logo"/>
 <ul class="nav nav-tabs" role="tablist">
-  <li class="active"><a href="#" onClick="$('li').removeClass('active');$(this).parent().addClass('active');$('.cells').hide();$('#articles').show();">Articles</a></li>
-  <li><a href="#" onClick="$('nav li').removeClass('active');$(this).parent().addClass('active');$('.cells').hide();$('#celebrities').show();">Celebrities</a></li>
+  <li class="active"><a href="#" onClick="$('.nav li').removeClass('active');$(this).parent().addClass('active');$('.cells').hide();$('#articles').show();">Articles</a></li>
+  <li><a href="#" onClick="$('.nav li').removeClass('active');$(this).parent().addClass('active');$('.cells').hide();$('#celebrities').show();">Celebrities</a></li>
 </ul>
 <ul id="articles" class="cells">
 
