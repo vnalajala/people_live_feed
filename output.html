@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <head>
 	<title>Sample</title>
+	<link href="bootstrap.min.css" rel="stylesheet" type="text/css"/>
 	<style type="text/css">
 	body{padding:0;margin:0;}
 	ul,li,div,a{margin:0;padding:0;}
@@ -12,11 +13,76 @@
 </head>
 <body>
 <img src="people-hot-list-logo.png" id="logo"/>
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#">Articles</a></li>
+  <li><a href="#" onClick="">Celebrities</a></li>
+</ul>
 <ul id="articles">
 
 </ul>	
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>	
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>	
+<script src="bootstrap.min.js"></script>	
 <script type="text/javascript">
+
+function refData(){
+	var that = this;
+	that.columns = Math.floor(that.containerWidth/200);
+
+	if(that.containerWidth > 200){
+		var extraPixels = that.containerWidth%200;
+		var extraPerColumn = Math.floor(extraPixels/that.columns);
+		that.colWidth = 200 + extraPerColumn;	
+	}	
+}
+
+refData.prototype = {
+	containerWidth: decodeURIComponent(getParam("width", location.search)) || 200,
+	articleCount: decodeURIComponent(getParam("articleCount", location.search)) || 18,
+	lineHeight: decodeURIComponent(getParam("lineHeight", location.search))  || 20,
+	fontFamily: decodeURIComponent(getParam("fontFamily",location.search)) || "Helvetica Neue,Helvetica,sans-serif",
+	colWidth:200,
+	articles:[],
+	columns:1,
+	outputArticles:function(){
+		var that = this;
+		var articlesPerColumn = Math.ceil(that.articleCount/that.columns);
+		var output = '';
+		var max = articlesPerColumn -1;
+		for(var i = 0 ; i < that.articleCount;i++){
+			if(i%articlesPerColumn == 0) output += '<li style="width:'+that.colWidth+'px;font-family:'+that.fontFamily+'">';
+			output += '<a class="article" href="http://google.com" style="line-height:'+that.lineHeight+'px;">Article #'+ (i+1)+"</a>";
+			if(i%articlesPerColumn == max) output += '</li>';
+		}
+		document.getElementById('articles').innerHTML = output;		
+	}
+}
+
+
+var REFERENCE_VALUES = new refData();
+
+
+
+
+
+
+$.ajax({
+ 	url: 'http://spotlightcdn.timeinc.com/solr/select?q=source:people&rows='+REFERENCE_VALUES.articleCount+'&sort=modified_at+desc&wt=json',
+ 	dataType: 'json',
+ 	cache: false,
+ 	async:false,
+ 	success: function(data){
+   		$.each( data.response.docs, function( i, item ) {
+			REFERENCE_VALUES.articles.push({url:item.source_url, headline:item.tout_headline})
+   		});
+		REFERENCE_VALUES.outputArticles();
+ 	},
+	error: function(one, two, three){
+
+ 	}
+})
+
+
+
 
 function getParam(name, params){
 	var paramName = name + "=";
@@ -27,47 +93,6 @@ function getParam(name, params){
 	if (length == -1) length = params.length;
 	return params.substr(offset, length - offset);
 }
-
-var containerWidth = decodeURIComponent(getParam("width", location.search)) || 200;
-var articleCount = decodeURIComponent(getParam("articleCount", location.search)) || 18;
-var lineHeight= decodeURIComponent(getParam("lineHeight", location.search))  || 20;
-var fontFamily = decodeURIComponent(getParam("fontFamily",location.search)) || "Helvetica Neue,Helvetica,sans-serif";
-var cols = Math.floor(containerWidth/200);
-var colWidth = 200;
-var articles = [];
-if(containerWidth > 200){
-	var extraPixels = containerWidth%200;
-	var extraPerColumn = Math.floor(extraPixels/cols);
-	var colWidth = 200 + extraPerColumn;
-}
-
-
-$.ajax({
- 	url: '//spotlightcdn.timeinc.com/solr/select?q=source:people&rows=100&sort=modified_at+desc&wt=json',
- 	dataType: 'json',
- 	cache: false,
- 	async:false,
- 	success: function(data){
- 		var articlesPerColumn = Math.ceil(articleCount/cols);
-		var output = '';
-		var max = articlesPerColumn -1;
-
-		$.each( data.response.docs, function( i, item ) {
-
-			if(i < articleCount){
-				if(i%articlesPerColumn == 0) output += '<li style="width:'+colWidth+'px;font-family:'+fontFamily+'">';
-				output += '<a target="_parent" class="article" href="'+item.source_url+'" style="line-height:'+lineHeight+'px;">'+ item.tout_headline+"</a>";
-				if(i%articlesPerColumn == max) output += '</li>';
-			}
-   		});
-
-		document.getElementById('articles').innerHTML = output;
-
- 	},
-	error: function(one, two, three){
- 	}
-	});
-
 </script>
 </body>
 </html>

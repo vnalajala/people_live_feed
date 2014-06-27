@@ -37,7 +37,7 @@ showLiveFeed.prototype = {
 		var that = this;
 		var width = that.container.offsetWidth;
 		var height = (that.options.articleCount * that.options.lineHeight) / Math.floor(width/200) ;
-		height += 90;
+		height += 110;
 		return {width:width, height:height};
 	},
 	
