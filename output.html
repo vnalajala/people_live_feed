@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<head>
+	<title>Sample</title>
+	<style type="text/css">
+	body{padding:0;margin:0;}
+	ul,li,div,a{margin:0;padding:0;}
+	ul{list-style-type:none;}
+	li{float:left;width:200px;}
+	.clear{clear:both;}
+	a.article{display:block;line-height:20px;font-size:14px;font-weight:bold;color:#333333;}
+	</style>
+</head>
+<body>
+<img src="people-hot-list-logo.png" id="logo"/>
+<ul id="articles">
+
+</ul>	
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>	
+<script type="text/javascript">
+
+function getParam(name, params){
+	var paramName = name + "=";
+	var offset = params.indexOf(paramName);
+	if (offset == -1) return "";
+	offset += paramName.length;  // adjust for equal sign
+	var length = params.indexOf("&", offset);
+	if (length == -1) length = params.length;
+	return params.substr(offset, length - offset);
+}
+
+var containerWidth = decodeURIComponent(getParam("width", location.search)) || 200;
+var articleCount = decodeURIComponent(getParam("articleCount", location.search)) || 18;
+var lineHeight= decodeURIComponent(getParam("lineHeight", location.search))  || 20;
+var fontFamily = decodeURIComponent(getParam("fontFamily",location.search)) || "Helvetica Neue,Helvetica,sans-serif";
+var cols = Math.floor(containerWidth/200);
+var colWidth = 200;
+var articles = [];
+if(containerWidth > 200){
+	var extraPixels = containerWidth%200;
+	var extraPerColumn = Math.floor(extraPixels/cols);
+	var colWidth = 200 + extraPerColumn;
+}
+
+
+$.ajax({
+ 	url: '//spotlightcdn.timeinc.com/solr/select?q=source:people&rows=100&sort=modified_at+desc&wt=json',
+ 	dataType: 'json',
+ 	cache: false,
+ 	async:false,
+ 	success: function(data){
+   		$.each( data.response.docs, function( i, item ) {
+			while(i < articleCount){
+				
+			}
+   		});
+ 	},
+	error: function(one, two, three){
+ 	}
+	})
+
+var articlesPerColumn = Math.ceil(articleCount/cols);
+var output = '';
+var max = articlesPerColumn -1;
+for(var i = 0 ; i < articleCount;i++){
+	if(i%articlesPerColumn == 0) output += '<li style="width:'+colWidth+'px;font-family:'+fontFamily+'">';
+	output += '<a class="article" href="http://google.com" style="line-height:'+lineHeight+'px;">Article #'+ (i+1)+"</a>";
+	if(i%articlesPerColumn == max) output += '</li>';
+}
+document.getElementById('articles').innerHTML = output;
+
+</script>
+</body>
+</html>
