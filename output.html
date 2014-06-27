@@ -14,12 +14,15 @@
 <body>
 <img src="people-hot-list-logo.png" id="logo"/>
 <ul class="nav nav-tabs" role="tablist">
-  <li class="active"><a href="#">Articles</a></li>
-  <li><a href="#" onClick="">Celebrities</a></li>
+  <li class="active"><a href="#" onClick="$('li').removeClass('active');$(this).parent().addClass('active');$('.cells').hide();$('#articles').show();">Articles</a></li>
+  <li><a href="#" onClick="$('nav li').removeClass('active');$(this).parent().addClass('active');$('.cells').hide();$('#celebrities').show();">Celebrities</a></li>
 </ul>
-<ul id="articles">
+<ul id="articles" class="cells">
 
 </ul>	
+<ul id="celebrities" class="cells" style="display:none;">
+	<li>Test</li>
+</ul>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>	
 <script src="bootstrap.min.js"></script>	
 <script type="text/javascript">
@@ -48,9 +51,10 @@ refData.prototype = {
 		var articlesPerColumn = Math.ceil(that.articleCount/that.columns);
 		var output = '';
 		var max = articlesPerColumn -1;
-		for(var i = 0 ; i < that.articleCount;i++){
+		for(var i = 0 ; i < that.articles.length;i++){
 			if(i%articlesPerColumn == 0) output += '<li style="width:'+that.colWidth+'px;font-family:'+that.fontFamily+'">';
-			output += '<a class="article" href="http://google.com" style="line-height:'+that.lineHeight+'px;">Article #'+ (i+1)+"</a>";
+			output += '<a class="article" href="'+that.articles[i].url+'" target="_blank" style="line-height:';
+			output += that.lineHeight+'px;">'+ that.articles[i].headline+'</a>';
 			if(i%articlesPerColumn == max) output += '</li>';
 		}
 		document.getElementById('articles').innerHTML = output;		
@@ -72,7 +76,7 @@ $.ajax({
  	async:false,
  	success: function(data){
    		$.each( data.response.docs, function( i, item ) {
-			REFERENCE_VALUES.articles.push({url:item.source_url, headline:item.tout_headline})
+			REFERENCE_VALUES.articles.push({url:item.source_url, headline:item.tout_headline.substring(0,27)+"..."})
    		});
 		REFERENCE_VALUES.outputArticles();
  	},
