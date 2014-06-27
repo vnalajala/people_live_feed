@@ -48,19 +48,40 @@ refData.prototype = {
 	fontFamily: decodeURIComponent(getParam("fontFamily",location.search)) || "Helvetica Neue,Helvetica,sans-serif",
 	colWidth:200,
 	articles:[],
+	celebrities:[],
 	columns:1,
 	outputArticles:function(){
 		var that = this;
 		var articlesPerColumn = Math.ceil(that.articleCount/that.columns);
 		var output = '';
+		var celebritiesOutput = '';
 		var max = articlesPerColumn -1;
 		for(var i = 0 ; i < that.articles.length;i++){
 			if(i%articlesPerColumn == 0) output += '<li style="width:'+that.colWidth+'px;font-family:'+that.fontFamily+'">';
 			output += '<a class="article" href="'+that.articles[i].url+'" target="_blank" style="line-height:';
 			output += that.lineHeight+'px;">'+ that.articles[i].headline+'</a>';
 			if(i%articlesPerColumn == max) output += '</li>';
+
+			 if(that.articles[i].celebrities){
+	          $.each( that.articles[i].celebrities, function( j, item ) {
+	            //document.write (item.replace('personsTax:','') + ' <BR>');
+	            if(item){
+	            	that.celebrities.push({url:that.articles[i].url, celebrity:item.replace('personsTax:','')})
+	            }
+	          //document.write (item.replace('personsTax:',''));
+	          });
+	        }
+		}
+
+		for(var j = 0 ; j < that.celebrities.length;j++){
+				if(j%articlesPerColumn == 0) celebritiesOutput += '<li style="width:'+that.colWidth+'px;font-family:'+that.fontFamily+'">';
+	            celebritiesOutput += '<a href="'+that.celebrities[j].url+'"';
+	            celebritiesOutput += ' target="_blank" class="article" style="line-height:'+that.lineHeight+'px">'+that.celebrities[j].celebrity+'</a>';
+	            if(j%articlesPerColumn == max) output += '</li>';
+
 		}
 		document.getElementById('articles').innerHTML = output;		
+		document.getElementById('celebrities').innerHTML = celebritiesOutput;		
 	}
 }
 
@@ -79,7 +100,7 @@ $.ajax({
  	async:false,
  	success: function(data){
    		$.each( data.response.docs, function( i, item ) {
-			REFERENCE_VALUES.articles.push({url:item.source_url, headline:item.tout_headline.substring(0,27)+"..."})
+			REFERENCE_VALUES.articles.push({url:item.source_url, headline:item.tout_headline.substring(0,27)+"...", celebrities:item.celebrities})
    		});
 		REFERENCE_VALUES.outputArticles();
  	},

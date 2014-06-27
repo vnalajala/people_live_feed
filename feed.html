@@ -18,7 +18,10 @@
 <div id="images"></div>
  
 <script>
- 
+  //var flickerAPI = "http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?";
+  //var pcwAPI = "http://spotlightcdn.timeinc.com/solr/select?q=source:people&rows=100&sort=modified_at+desc&wt=json";
+/*  
+
   $.ajax({
       url: 'http://spotlightcdn.timeinc.com/solr/select?q=source:people&rows=100&sort=modified_at+desc&wt=json',
       dataType: 'json',
@@ -27,16 +30,45 @@
       cache: false,
       async:false,
       success: function(data){
-        //alert('success' + data.response.docs);
-        $.each( data.response.docs, function( i, item ) {
-        document.write (item.tout_headline + "<br>");
+        alert('success' + data.response.);
+        $.each( data.items, function( i, item ) {
+        document.write (item);
         if ( i === 3 ) {
           return false;
         }
         });
       },error: function(one, two, three){
+//        location.href ='/include/html/error/system_error.html?error='+one+'-'+two;
       }
     })
+*/
+ $.ajax({
+     // url: 'http://spotlightcdn.timeinc.com/solr/select?q=doc_type:Celebrity&rows=500&fl=celebrity_id,name,handle_twitter_number&sort=celebrity_id+asc&wt=json',
+      url: 'http://spotlightcdn.timeinc.com/solr/select?q=source:people&rows=100&sort=modified_at+desc&wt=json',
+      dataType: 'json',
+      //data: 'webPromotionId='+this.webPromotionId+'&referer='+document.referrer,
+      //type: 'POST',
+      cache: false,
+      async:false,
+      success: function(data){
+        alert('success' + data.response.docs);
+        $.each( data.response.docs, function( i, item ) {
+        //document.write (item.celebrities);
+        if(item.celebrities){
+          $.each( item.celebrities, function( i, item ) {
+            document.write (item.replace('personsTax:','') + ' <BR>');
+          //document.write (item.replace('personsTax:',''));
+          });
+        }
+        if ( i === 3 ) {
+          return false;
+        }
+        });
+      },error: function(one, two, three){
+//        location.href ='/include/html/error/system_error.html?error='+one+'-'+two;
+      }
+    })
+
 </script>
  
 </body>
